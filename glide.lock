@@ -1,5 +1,5 @@
-hash: 15ecfa08b4e140aa3eed7ef8cc758bc1468bbb8fb1644a2935286eee7d756ef8
-updated: 2017-09-28T15:29:15.054967112-07:00
+hash: aa6ff1e0a781cdfcd66e939b6224bbdde4f51f7bbd82420cbefcc68b95c5c24c
+updated: 2017-09-28T15:59:06.15706396-07:00
 imports:
 - name: github.com/fluffle/goirc
   version: c981f8f5680c85268c75c68e4945abc55ba70de0

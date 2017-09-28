@@ -93,7 +93,7 @@ func main() {
 	}
 	c.HandleFunc(irc.CONNECTED, func(conn *irc.Conn, line *irc.Line) {
 		for _, channel := range info.AutoJoin {
-			conn.join(channel)
+			conn.Join(channel)
 		}
 	})
 	c.HandleFunc(irc.DISCONNECTED, func(conn *irc.Conn, line *irc.Line) {

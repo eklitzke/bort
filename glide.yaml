@@ -1,4 +1,4 @@
-package: monad.io/bort
+package: github.com/eklitzke/bort
 import:
 - package: github.com/fluffle/goirc
 - package: golang.org/x/net
