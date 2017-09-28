@@ -148,7 +148,7 @@ func main() {
 		case "vol":
 			fallthrough
 		case "volume":
-			if volStr, err := gdax.getPrice(getProduct()); err == nil {
+			if volStr, err := gdax.getVolume(getProduct()); err == nil {
 				reply(volStr)
 			} else {
 				log.Print(err)
