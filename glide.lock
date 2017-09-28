@@ -1,0 +1,20 @@
+hash: 15ecfa08b4e140aa3eed7ef8cc758bc1468bbb8fb1644a2935286eee7d756ef8
+updated: 2017-09-28T15:29:15.054967112-07:00
+imports:
+- name: github.com/fluffle/goirc
+  version: c981f8f5680c85268c75c68e4945abc55ba70de0
+  subpackages:
+  - client
+  - logging
+  - state
+- name: github.com/golang/mock
+  version: 2b473a1a899b0c9967501477ec03c71c32550cbe
+  subpackages:
+  - gomock
+- name: golang.org/x/net
+  version: 0a9397675ba34b2845f758fe3cd68828369c6517
+  subpackages:
+  - proxy
+- name: gopkg.in/yaml.v2
+  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
+testImports: []

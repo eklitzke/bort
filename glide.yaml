@@ -1,0 +1,7 @@
+package: monad.io/bort
+import:
+- package: github.com/fluffle/goirc
+- package: golang.org/x/net
+  subpackages:
+  - proxy
+- package: gopkg.in/yaml.v2
