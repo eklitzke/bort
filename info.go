@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"sort"
 	"strings"
 	"time"
 )
@@ -21,15 +22,20 @@ func makeGDAXInfo() *GDAXInfo {
 	return &GDAXInfo{}
 }
 
-func (info *GDAXInfo) listProducts() string {
+func (info *GDAXInfo) refreshProducts() {
 	if info.products == nil {
 		products, err := getProducts()
 		if err != nil {
 			log.Printf("err %v when getting products", err)
-			return ""
+			return
 		}
+		sort.Sort(byProduct(products))
 		info.products = products
 	}
+}
+
+func (info *GDAXInfo) listProducts() string {
+	info.refreshProducts()
 	var productIds []string
 	for _, p := range info.products {
 		productIds = append(productIds, p.DisplayName)
@@ -71,4 +77,15 @@ func (info *GDAXInfo) getVolume(product string) (string, error) {
 		return "", err
 	}
 	return fmt.Sprintf("%1.2f", tick.Volume), nil
+}
+
+func (info *GDAXInfo) getAllPrices() string {
+	info.refreshProducts()
+	var infos []string
+	for _, product := range info.products {
+		if tick, err := info.getTicker(product.Id); err == nil {
+			infos = append(infos, fmt.Sprintf("%s $%1.2f", product.BaseCurrency, tick.Price))
+		}
+	}
+	return strings.Join(infos, ", ")
 }

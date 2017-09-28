@@ -23,6 +23,12 @@ type Product struct {
 	DisplayName   string `json:"display_name"`
 }
 
+type byProduct []Product
+
+func (p byProduct) Len() int           { return len(p) }
+func (p byProduct) Less(i, j int) bool { return p[i].Id < p[j].Id }
+func (p byProduct) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+
 type RawTicker struct {
 	Price  string `json:"price"`
 	Volume string `json:"volume"`

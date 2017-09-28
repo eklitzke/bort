@@ -159,6 +159,11 @@ func main() {
 				conn.Privmsg(args[:ix], args[ix+1:])
 			}
 
+		case "all":
+			fallthrough
+		case "tall":
+			reply(gdax.getAllPrices())
+
 		case "vol":
 			fallthrough
 		case "volume":
