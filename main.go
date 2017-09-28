@@ -63,9 +63,15 @@ func parseCommandRaw(channel, msg string) string {
 }
 
 // parse a command directed at us
-func parseCommand(channel, msg string) []string {
-	cmd := parseCommandRaw(channel, msg)
-	return strings.Split(strings.TrimSpace(cmd), " ")
+func parseCommand(channel, msg string) (string, string) {
+	if cmd := strings.TrimSpace(parseCommandRaw(channel, msg)); cmd != "" {
+		ix := strings.IndexByte(cmd, ' ')
+		if ix == -1 {
+			return cmd, ""
+		}
+		return cmd[:ix], cmd[ix+1:]
+	}
+	return "", ""
 }
 
 func main() {
@@ -111,12 +117,10 @@ func main() {
 			log.Fatalf("got unexepcted len(line.Args) = %d, line.Args = %v, line = %v\n", len(line.Args), line.Args, line)
 		}
 		channel := line.Args[0]
-		pieces := parseCommand(channel, line.Args[1])
-		if len(pieces) == 0 {
+		cmd, args := parseCommand(channel, line.Args[1])
+		if cmd == "" {
 			return
 		}
-		cmd := pieces[0]
-		args := pieces[1:]
 
 		reply := func(response string) {
 			conn.Privmsg(channel, response)
@@ -124,7 +128,7 @@ func main() {
 
 		getProduct := func() string {
 			if len(args) > 0 {
-				product := strings.ToUpper(args[0])
+				product := strings.ToUpper(args)
 				if strings.IndexByte(product, '-') == -1 {
 					return product + "-USD"
 				}
@@ -145,6 +149,16 @@ func main() {
 		case "products":
 			reply(gdax.listProducts())
 
+		case "say":
+			if line.Nick == info.Oper {
+				ix := strings.IndexByte(args, ' ')
+				if ix == -1 {
+					log.Printf("say command didn't have a message!")
+					return
+				}
+				conn.Privmsg(args[:ix], args[ix+1:])
+			}
+
 		case "vol":
 			fallthrough
 		case "volume":
@@ -156,7 +170,7 @@ func main() {
 		}
 	})
 	if err := c.Connect(); err != nil {
-		fmt.Printf("Connection error: %s\n", err.Error())
+		log.Fatalf("Connection error: %v", err)
 	}
 
 	// Wait for disconnect
