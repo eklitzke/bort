@@ -53,7 +53,7 @@ func (info *GDAXInfo) getTicker(productId string) (*Ticker, error) {
 			return &tick, nil
 		}
 	}
-	tick, err := fetchTicker(productId)
+	tick, err := getTicker(productId)
 	if err != nil {
 		log.Printf("error %v when getting ticker for product %s", err, productId)
 		return nil, err
@@ -88,4 +88,14 @@ func (info *GDAXInfo) getAllPrices() string {
 		}
 	}
 	return strings.Join(infos, ", ")
+}
+
+func (info *GDAXInfo) getStats(productId string) string {
+	stats, err := getStats(productId) // XXX: add caching
+	if err != nil {
+		log.Printf("err %v in getPrice()", err)
+		return ""
+	}
+	return fmt.Sprintf("$%1.2f; change = %1.2f%%, volume = %1.2f, O/H/L = %1.2f/%1.2f/%1.2f",
+		stats.Ticker.Price, stats.ChangePct, stats.Ticker.Volume, stats.Open, stats.High, stats.Low)
 }

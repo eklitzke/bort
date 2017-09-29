@@ -41,12 +41,27 @@ type Ticker struct {
 	Time   time.Time
 }
 
+type RawStats struct {
+	Open   string `json:"open"`
+	High   string `json:"high"`
+	Low    string `json:"low"`
+	Volume string `json:"volume"`
+}
+
+type Stats struct {
+	Ticker    Ticker
+	Open      float64
+	High      float64
+	Low       float64
+	ChangePct float64
+}
+
 func (t *Ticker) vintage() time.Duration {
 	return time.Now().UTC().Sub(t.Time)
 }
 
-func getProducts() ([]Product, error) {
-	resp, err := http.Get(gdaxBase + "/products")
+func get(path string) ([]byte, error) {
+	resp, err := http.Get(gdaxBase + path)
 	if err != nil {
 		return nil, err
 	}
@@ -56,12 +71,18 @@ func getProducts() ([]Product, error) {
 	}
 
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	return ioutil.ReadAll(resp.Body)
+}
+
+func getProducts() ([]Product, error) {
+	body, err := get("/products")
 	if err != nil {
 		return nil, err
 	}
 	var res, ret []Product
-	json.Unmarshal(body, &res)
+	if err := json.Unmarshal(body, &res); err != nil {
+		return nil, err
+	}
 	for _, product := range res {
 		if product.QuoteCurrency == targetQuote {
 			ret = append(ret, product)
@@ -70,24 +91,16 @@ func getProducts() ([]Product, error) {
 	return ret, nil
 }
 
-func fetchTicker(productId string) (Ticker, error) {
-	resp, err := http.Get(gdaxBase + fmt.Sprintf("/products/%s/ticker", productId))
-	if err != nil {
-		return Ticker{}, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return Ticker{}, fmt.Errorf("Expected status %d, instead got %d; msg was %s",
-			http.StatusOK, resp.StatusCode, resp.Status)
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+func getTicker(productId string) (Ticker, error) {
+	body, err := get(fmt.Sprintf("/products/%s/ticker", productId))
 	if err != nil {
 		return Ticker{}, err
 	}
 
 	var raw RawTicker
-	json.Unmarshal(body, &raw)
+	if err := json.Unmarshal(body, &raw); err != nil {
+		return Ticker{}, err
+	}
 
 	var tick Ticker
 	if price, err := strconv.ParseFloat(raw.Price, 64); err == nil {
@@ -101,5 +114,33 @@ func fetchTicker(productId string) (Ticker, error) {
 		tick.Time = tv
 	}
 	return tick, nil
+}
 
+func getStats(productId string) (Stats, error) {
+	ticker, err := getTicker(productId)
+	if err != nil {
+		return Stats{}, err
+	}
+	stats := Stats{Ticker: ticker}
+
+	body, err := get(fmt.Sprintf("/products/%s/stats", productId))
+	if err != nil {
+		return stats, err
+	}
+
+	var raw RawStats
+	if err := json.Unmarshal(body, &raw); err != nil {
+		return stats, err
+	}
+	if open, err := strconv.ParseFloat(raw.Open, 64); err == nil {
+		stats.Open = open
+	}
+	if low, err := strconv.ParseFloat(raw.Low, 64); err == nil {
+		stats.Low = low
+	}
+	if high, err := strconv.ParseFloat(raw.High, 64); err == nil {
+		stats.High = high
+	}
+	stats.ChangePct = 100 * (stats.Ticker.Price/stats.Open - 1)
+	return stats, nil
 }

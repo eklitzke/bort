@@ -123,7 +123,9 @@ func main() {
 		}
 
 		reply := func(response string) {
-			conn.Privmsg(channel, response)
+			if response != "" {
+				conn.Privmsg(channel, response)
+			}
 		}
 
 		getProduct := func() string {
@@ -163,6 +165,9 @@ func main() {
 			fallthrough
 		case "tall":
 			reply(gdax.getAllPrices())
+
+		case "stats":
+			reply(gdax.getStats(getProduct()))
 
 		case "vol":
 			fallthrough
