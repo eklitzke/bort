@@ -52,12 +52,7 @@ func parseCommandRaw(channel, msg string) string {
 		match := addressedToMeRe.FindStringIndex(msg)
 		if match != nil {
 			return msg[match[1]:]
-		} else if msg[0] == '!' {
-			return msg[1:]
-		} else if msg[:2] == ";;" {
-			return msg[2:]
 		}
-		return ""
 	}
 	return msg
 }
@@ -140,18 +135,20 @@ func main() {
 		}
 
 		switch cmd {
-		case "price":
+		case "amen":
+			reply("hail satan")
+		case "!price":
 			fallthrough
-		case "tlast":
+		case "!tlast":
 			if priceStr, err := gdax.getPrice(getProduct()); err == nil {
 				reply(priceStr)
 			} else {
 				log.Print(err)
 			}
-		case "products":
+		case "!products":
 			reply(gdax.listProducts())
 
-		case "say":
+		case "!say":
 			if line.Nick == info.Oper {
 				ix := strings.IndexByte(args, ' ')
 				if ix == -1 {
@@ -161,17 +158,17 @@ func main() {
 				conn.Privmsg(args[:ix], args[ix+1:])
 			}
 
-		case "all":
+		case "!all":
 			fallthrough
-		case "tall":
+		case "!tall":
 			reply(gdax.getAllPrices())
 
-		case "stats":
+		case "!stats":
 			reply(gdax.getStats(getProduct()))
 
-		case "vol":
+		case "!vol":
 			fallthrough
-		case "volume":
+		case "!volume":
 			if volStr, err := gdax.getVolume(getProduct()); err == nil {
 				reply(volStr)
 			} else {
