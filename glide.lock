@@ -1,6 +1,14 @@
-hash: aa6ff1e0a781cdfcd66e939b6224bbdde4f51f7bbd82420cbefcc68b95c5c24c
-updated: 2017-09-28T15:59:06.15706396-07:00
+hash: c84b8366d1b2f8075dcf79292a47abc83037f57a5ecc36b560c43c8f97c5df7c
+updated: 2017-10-01T22:26:07.936534749-07:00
 imports:
+- name: github.com/cenkalti/backoff
+  version: 61153c768f31ee5f130071d08fc82b85208528de
+- name: github.com/dghubble/go-twitter
+  version: c4115fa44a928413e0b857e0eb47376ffde3a61a
+  subpackages:
+  - twitter
+- name: github.com/dghubble/sling
+  version: 80ec33c6152a53edb5545864ca37567b506c4ca5
 - name: github.com/fluffle/goirc
   version: c981f8f5680c85268c75c68e4945abc55ba70de0
   subpackages:
@@ -11,9 +19,14 @@ imports:
   version: 2b473a1a899b0c9967501477ec03c71c32550cbe
   subpackages:
   - gomock
+- name: github.com/google/go-querystring
+  version: 53e6ce116135b80d037921a7fdd5138cf32d7a8a
+  subpackages:
+  - query
 - name: golang.org/x/net
   version: 0a9397675ba34b2845f758fe3cd68828369c6517
   subpackages:
+  - context
   - proxy
 - name: gopkg.in/yaml.v2
   version: eb3733d160e74a9c7e442f435eb3bea458e1d19f

@@ -117,7 +117,10 @@ func main() {
 			log.Fatalf("got unexepcted len(line.Args) = %d, line.Args = %v, line = %v\n", len(line.Args), line.Args, line)
 		}
 		channel := line.Args[0]
-		cmd, args := parseCommand(channel, line.Args[1])
+		msg := line.Args[1]
+		log.Printf("msg is %q", msg)
+		getTweetInfo(msg)
+		cmd, args := parseCommand(channel, msg)
 		if cmd == "" {
 			return
 		}
